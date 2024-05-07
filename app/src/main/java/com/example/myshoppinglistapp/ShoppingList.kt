@@ -48,6 +48,42 @@ data class ShoppingItem(val id:Int,
 
 
 @Composable
+fun ShoppingListItem(item:ShoppingItem,
+                     onEditClick: () -> Unit,
+                     onDeleteClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth()
+            .border(
+                border = BorderStroke(2.dp, Color(0xFF018786)),
+                shape = RoundedCornerShape(20)
+            )
+    )
+    {
+        Text(text = item.name,modifier =Modifier.padding(8.dp))
+        Text(text = "Qty: ${item.quantity}",
+            modifier= Modifier.padding(8.dp))
+
+        Row(modifier = Modifier.padding(8.dp)){
+            IconButton(onClick = onEditClick) {
+                Icon(imageVector = Icons.Default.Edit,contentDescription = null)
+            }
+
+            IconButton(onClick = onDeleteClick) {
+                Icon(imageVector = Icons.Default.Delete,contentDescription = null)
+            }
+
+
+        }
+
+
+    }
+}
+
+
+
+@Composable
 fun ShoppingListApp()
 {
     var sItems by remember {
@@ -193,39 +229,6 @@ fun ShoppingItemEditor(item: ShoppingItem,
 
 
 
-@Composable
-fun ShoppingListItem(item:ShoppingItem,
-                     onEditClick: () -> Unit,
-                     onDeleteClick: () -> Unit) {
-    Row(
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth()
-            .border(
-                border = BorderStroke(2.dp, Color(0xFF018786)),
-                shape = RoundedCornerShape(20)
-            )
-    )
-    {
-        Text(text = item.name,modifier =Modifier.padding(8.dp))
-        Text(text = "Qty: ${item.quantity}",
-            modifier= Modifier.padding(8.dp))
-
-        Row(modifier = Modifier.padding(8.dp)){
-            IconButton(onClick = onEditClick) {
-                Icon(imageVector = Icons.Default.Edit,contentDescription = null)
-            }
-
-            IconButton(onClick = onDeleteClick) {
-                Icon(imageVector = Icons.Default.Delete,contentDescription = null)
-            }
-
-
-        }
-
-
-        }
-    }
 
 
 
