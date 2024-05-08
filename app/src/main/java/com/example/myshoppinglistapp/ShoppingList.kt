@@ -59,6 +59,7 @@ fun ShoppingListItem(item:ShoppingItem,
                 border = BorderStroke(2.dp, Color(0xFF018786)),
                 shape = RoundedCornerShape(20)
             )
+        , horizontalArrangement = Arrangement.SpaceBetween
     )
     {
         Text(text = item.name,modifier =Modifier.padding(8.dp))
@@ -113,7 +114,25 @@ fun ShoppingListApp()
             .fillMaxSize()
             .padding(16.dp)) {
             items(sItems){
-                ShoppingListItem(it,{},{})
+                item ->
+                if(item.isEditing){
+                    ShoppingItemEditor(item = item, onEditComplete = {
+                        editedName,editedQuantity ->
+                        sItems = sItems.map{it.copy(isEditing = false)}
+                        val editedItem = sItems.find{it.id == item.id}
+                        editedItem?.let{
+                            it.name  = editedName
+                            it.quantity =editedQuantity
+                        }
+                    })
+                }
+                else
+                    ShoppingListItem(item =item ,
+                        onEditClick = {
+                        //어떤 항목을 편집하는지 알아내는 메서드
+                        sItems =  sItems.map{it.copy(isEditing = it.id == item.id)}
+                    },onDeleteClick = {sItems =sItems - item})
+
             }
 
         }
@@ -208,12 +227,16 @@ fun ShoppingItemEditor(item: ShoppingItem,
 
             BasicTextField(value =editedName , onValueChange = {editedName = it},
                 singleLine = true
-                ,modifier = Modifier.wrapContentSize().padding(8.dp)
+                ,modifier = Modifier
+                    .wrapContentSize()
+                    .padding(8.dp)
             )//wrapContentSize는 Field 크기를 필요한 만큼만 차지한다.
             //위의 경우 text가 5글자면 5글자의 크기 만큼만 공간을 차지한다.
             BasicTextField(value =editedQuantity , onValueChange = {editedQuantity = it},
                 singleLine = true
-                ,modifier = Modifier.wrapContentSize().padding(8.dp)
+                ,modifier = Modifier
+                    .wrapContentSize()
+                    .padding(8.dp)
             )
 
         }
