@@ -60,6 +60,7 @@ fun ShoppingListItem(item:ShoppingItem,
                 shape = RoundedCornerShape(20)
             )
         , horizontalArrangement = Arrangement.SpaceBetween
+
     )
     {
         Text(text = item.name,modifier =Modifier.padding(8.dp))
@@ -102,17 +103,19 @@ fun ShoppingListApp()
 
     Column(modifier = Modifier.fillMaxSize(),
         verticalArrangement =  Arrangement.Center
-
+//수직 정렬
     ) {
         Button(onClick = { showDialog = true }
-            , modifier = Modifier.align(Alignment.CenterHorizontally)
+            , modifier = Modifier.align(Alignment.CenterHorizontally)//수평 정렬
         ) {
 
             Text("Add Item")
         }
-        LazyColumn(modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)) {
+        //lazyColumn은 스크롤 가능한 단일 컬럼 목록을 만들기 위해 사용된다.
+        /*쉽게 생각하면 인스타를 스크롤 할 때 필요한 것만 보이게 하고 나머지는 안보이게 해서
+        메모리를 사용을 줄여준다. 때문에 대량의  아이템 목록을 효율적으로 처리 가능한다.
+        * */
+        LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
             items(sItems){
                 item ->
                 if(item.isEditing){
@@ -120,7 +123,12 @@ fun ShoppingListApp()
                         editedName,editedQuantity ->
                         sItems = sItems.map{it.copy(isEditing = false)}
                         val editedItem = sItems.find{it.id == item.id}
+                        //find는 리스트에서 람다식 내부에 조건을 참으로 만드는 첫번재 요소를 반환한다.
+                        //만약 조건을 만족하지 못 할 경우(false인 경우)null을 반환한다.
                         editedItem?.let{
+                            //editedItem은 객체를 담고 있다
+                            //?는 안전호출 연산자로 객체가 NULL이 아닌 경우에만 메서드를 호출한다.
+                            //let은 editedItem의 객체를 매개변수에 전달하고 람다 블록 내 식을 실행시킨다.
                             it.name  = editedName
                             it.quantity =editedQuantity
                         }
@@ -129,9 +137,16 @@ fun ShoppingListApp()
                 else
                     ShoppingListItem(item =item ,
                         onEditClick = {
-                        //어떤 항목을 편집하는지 알아내는 메서드
                         sItems =  sItems.map{it.copy(isEditing = it.id == item.id)}
-                    },onDeleteClick = {sItems =sItems - item})
+                            /*
+                            map 함수는 리스트의 각 요소에 대해 람다식을 적용하여 새로운 리스트를 생성해 반환해주는 함수이다
+                            위의 경우 sItems는  Data 객체 리스트로 리스트 각 요소 안을 다 돌면서 각 요소(it)의 id가
+                            item의 id와 같으면
+                            isEditing을 true로 변환하여 요소의 멤버 변수 상태를 바꾸고
+                            새로운 리스트를 반환하여  Sitems에 복사해준다.
+
+                             */
+                    },onDeleteClick = {sItems =sItems - item}) //
 
             }
 
@@ -159,6 +174,7 @@ fun ShoppingListApp()
                                         sItems = sItems + newItem
                                         showDialog = false // alertDialog를 닫아줌
                                         itemName = "" // 해당 객체를 넣고 난 후 이름을 초기화 한다.
+                                        itemQuantity = ""
                                     }
 
 
@@ -182,7 +198,7 @@ fun ShoppingListApp()
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(10.dp)
-                        .border(width = 5.dp, color = Color.Blue, shape = CircleShape)
+
 
                 )
                 OutlinedTextField(value = itemQuantity ,
@@ -225,6 +241,7 @@ fun ShoppingItemEditor(item: ShoppingItem,
     {
         Column {
 
+            //BasicTextField의 경우 단순한 텍스 입력 필드로 외곽선이나 배경을 가지고 있지 않다. 텍스트 필드를 커스텀할 때 많이 사용한다.
             BasicTextField(value =editedName , onValueChange = {editedName = it},
                 singleLine = true
                 ,modifier = Modifier
